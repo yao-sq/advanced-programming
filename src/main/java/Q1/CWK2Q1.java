@@ -1,7 +1,6 @@
 package Q1;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.*;
 
 /**
  * @author Anonymous (do not change)
@@ -20,50 +19,55 @@ import java.util.Collections;
 
 public class CWK2Q1 {
     public static void shell_sort(ArrayList<Double> array) {
-        /* An utility function to print array of size n*/
-
-        /* function to sort array using shellSort */
         int n = array.size();
 
-        // Start with a larger gap, then reduce the gap to 1
-        // we take gap sequence in order of |N/2|, |N/4|, |N/8|...1
         for (int gap = n / 2; gap > 0; gap /= 2) {
-            // we perform gapped insertion sort for this gap size.
-            // The first gap elements a[0..gap-1] are already
-            // in gapped order keep adding one more element
-            // until the entire array is gap sorted
             for (int i = gap; i < n; i += 1) {
-                // store a[i] in temp and make a hole at
-                // position i
                 double temp = array.get(i);
-                // shift earlier gap-sorted elements up until
-                // the correct location for a[i] is found
                 int j;
                 for (j = i; j >= gap && array.get(j - gap) > temp; j -= gap)
                     array.set(j, array.get(j - gap));
-
-                // put temp (the original a[i]) in its correct
-                // location
                 array.set(j, temp);
             }
-//            System.out.println(array);
+            System.out.println(array);
         }
-		System.out.print(array);
+//        System.out.print(array);
     }
 
-    public static void main(String[] args) {
-        ArrayList<Double> testList = new ArrayList<Double>();
-        testList.add(3.4);
-        testList.add(6.55);
-        testList.add(-12.2);
-        testList.add(1.73);
-        testList.add(140.98);
-        testList.add(-4.18);
-        testList.add(52.87);
-        testList.add(99.14);
-        testList.add(73.202);
-        testList.add(-23.6);
 
+    public static void main(String[] args) {
+//        ArrayList<Double> testList = new ArrayList<Double>();
+//        testList.add(3.4);
+//        testList.add(6.55);
+//        testList.add(-12.2);
+//        testList.add(1.73);
+//        testList.add(140.98);
+//        testList.add(-4.18);
+//        testList.add(52.87);
+//        testList.add(99.14);
+//        testList.add(73.202);
+//        testList.add(-23.6);
+
+        ArrayList<Double> testList = new ArrayList<Double>();
+
+        Random rand = new Random();
+        for (int k = 0; k < 1000; k++) {
+            int pick = rand.nextInt(88) + 13;
+            testList.add((double) pick);
+        }
+
+//        ArrayList<Double> testList = new ArrayList<Double>(convertArrayIntegerToDouble(Arrays.asList(61, 109, 149, 111, 34, 2)));
         shell_sort(testList);
+    }
+
+
+
+    public static List<Double> convertArrayIntegerToDouble(List<Integer> integers) {
+        List<Double> doubles = new ArrayList<Double>();
+        for (Integer i: integers) {
+            Double d = new Double(i);
+            doubles.add(d);
+        }
+        return doubles;
     }
 }

@@ -38,7 +38,7 @@ class CWK2Q1Test {
         assertThat(outContent.toString()).isEqualTo(expectedSorted.toString());
     }
 
-    private List<Double> convertArrayIntegerToDouble(List<Integer> integers) {
+    public List<Double> convertArrayIntegerToDouble(List<Integer> integers) {
         List<Double> doubles = new ArrayList<Double>();
         for (Integer i: integers) {
             Double d = new Double(i);
