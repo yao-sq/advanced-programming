@@ -25,7 +25,7 @@ package Q8;
 public class CWK2Q8 {
 
 	public static int howManyTuesdays() {
-		
+		return 0;
 	}
 	
 	public static void main(String[] args) {
