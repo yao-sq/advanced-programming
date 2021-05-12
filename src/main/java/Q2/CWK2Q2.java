@@ -16,37 +16,49 @@ import java.lang.Math;
 
 public class CWK2Q2 {
     public static int interpolation_search(ArrayList<String> array, String item) {
-        Map<String, Integer> sortedIndexOf;
-
-        // Need to sort array
-        Collections.sort(array);
-        sortedIndexOf = letterToNumber(array);
-        return interpolation_search(array, item, sortedIndexOf);
+        // Work with a copy so the user array is not modified
+        array = new ArrayList<>(array);
+        List<Map.Entry<String, Integer>> entries = new ArrayList<>();
+        for (int i = 0; i < array.size(); i++) {
+            String value = array.get(i);
+            entries.add(new AbstractMap.SimpleEntry<String, Integer>(value, i));
+        }
+        entries.sort(Map.Entry.comparingByKey());
+        return interpolation_search(array, item, entries);
 
     }
 
-    public static int interpolation_search(ArrayList<String> array, String item, Map<String, Integer> sortedIndexOf) {
+    private static int interpolation_search(ArrayList<String> array, String item, List<Map.Entry<String, Integer>> entries) {
         int low = 0;
         int high = array.size() - 1;
         int mid;
+        int result;
 
+        Collections.sort(array);
+        Map<String, Integer> sortedIndexOf = letterToNumber(array);
+//        System.out.println(sortedIndexOf);
+
+        Integer itemValue = sortedIndexOf.get(item);
         while (  sortedIndexOf.get(array.get(high)) != sortedIndexOf.get(array.get(low))
-                &&  sortedIndexOf.get(item) >= sortedIndexOf.get(array.get(low))
-                &&  sortedIndexOf.get(item) <= sortedIndexOf.get(array.get(high))
+                &&  itemValue >= sortedIndexOf.get(array.get(low))
+                &&  itemValue <= sortedIndexOf.get(array.get(high))
         ){
-            mid = low + ((sortedIndexOf.get(item) - sortedIndexOf.get(array.get(low))) * (high - low) / (sortedIndexOf.get(array.get(high)) - sortedIndexOf.get(array.get(low))));
+            mid = low + ((itemValue - sortedIndexOf.get(array.get(low))) * (high - low) / (sortedIndexOf.get(array.get(high)) - sortedIndexOf.get(array.get(low))));
 
-            if (sortedIndexOf.get(array.get(mid)) < sortedIndexOf.get(item))
+            if (sortedIndexOf.get(array.get(mid)) < itemValue)
                 low = mid + 1;
-            else if (sortedIndexOf.get(item) < sortedIndexOf.get(array.get(mid)))
+            else if (itemValue < sortedIndexOf.get(array.get(mid)))
                 high = mid - 1;
             else
-                return mid;
+
+                return entries.get(mid).getValue();
         }
-        if (sortedIndexOf.get(item) == sortedIndexOf.get(array.get(low)))
-            return low;
+
+        if (itemValue == sortedIndexOf.get(array.get(low)))
+            return entries.get(low).getValue();
         else
             return -1;
+
     }
 
 
@@ -81,17 +93,7 @@ public class CWK2Q2 {
         testList.add("Are");
         testList.add("You");
 
-        // Remember initial positions
-        Map<String, Integer> unsortedIndexOf = letterToNumber(testList);
-
-
-        int result = -1;
-        int sortedIndex = interpolation_search(testList, "How");
-        if (sortedIndex != -1) {
-            result = unsortedIndexOf.get("How");
-        }
-        System.out.println("Result = " + result);
-
+        System.out.println(interpolation_search(testList, "Are"));
     }
 
 }

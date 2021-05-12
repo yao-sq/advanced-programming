@@ -7,10 +7,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
+import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -48,8 +46,8 @@ class CWK2Q2Test {
     void checkStringIsReadProperly() throws FileNotFoundException {
         String[] words = getStringFromFile();
 
-        Assertions.assertThat(words[0]).isEqualTo("\"MARY\"");
-        Assertions.assertThat(words[1]).isEqualTo("\"PATRICIA\"");
+        Assertions.assertThat(words[0]).isEqualTo("MARY");
+        Assertions.assertThat(words[1]).isEqualTo("PATRICIA");
     }
 
     public String[] getStringFromFile() throws FileNotFoundException {
@@ -58,6 +56,8 @@ class CWK2Q2Test {
         sc.useDelimiter("\\Z");
         String s = sc.next();
         String[] words = s.split(",");
+        Arrays.setAll(words, i -> words[i].substring(1, words[i].length()-1));
+//        Arrays.setAll(words, i -> words[i].replaceFirst("^\"(.*)\"$", "$1"));
         return words;
     }
 }
