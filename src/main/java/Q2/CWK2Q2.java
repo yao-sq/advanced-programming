@@ -2,6 +2,8 @@ package Q2;
 
 import java.util.*;
 import java.lang.Math;
+import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 
 /**
  * @author Anonymous (do not change)
@@ -14,75 +16,64 @@ import java.lang.Math;
  * it is not present.
  */
 
-public class CWK2Q2 {
+public class CWK2Q2<T> {
     public static int interpolation_search(ArrayList<String> array, String item) {
-        // Work with a copy so the user array is not modified
-        array = new ArrayList<>(array);
-        List<Map.Entry<String, Integer>> entries = new ArrayList<>();
-        for (int i = 0; i < array.size(); i++) {
-            String value = array.get(i);
-            entries.add(new AbstractMap.SimpleEntry<String, Integer>(value, i));
-        }
-        entries.sort(Map.Entry.comparingByKey());
-        return interpolation_search(array, item, entries);
-
-    }
-
-    private static int interpolation_search(ArrayList<String> array, String item, List<Map.Entry<String, Integer>> entries) {
-        int low = 0;
-        int high = array.size() - 1;
-        int mid;
-        int result;
-
         Collections.sort(array);
-        Map<String, Integer> sortedIndexOf = letterToNumber(array);
-//        System.out.println(sortedIndexOf);
-
-        Integer itemValue = sortedIndexOf.get(item);
-        while (  sortedIndexOf.get(array.get(high)) != sortedIndexOf.get(array.get(low))
-                &&  itemValue >= sortedIndexOf.get(array.get(low))
-                &&  itemValue <= sortedIndexOf.get(array.get(high))
-        ){
-            mid = low + ((itemValue - sortedIndexOf.get(array.get(low))) * (high - low) / (sortedIndexOf.get(array.get(high)) - sortedIndexOf.get(array.get(low))));
-
-            if (sortedIndexOf.get(array.get(mid)) < itemValue)
-                low = mid + 1;
-            else if (itemValue < sortedIndexOf.get(array.get(mid)))
-                high = mid - 1;
-            else
-
-                return entries.get(mid).getValue();
-        }
-
-        if (itemValue == sortedIndexOf.get(array.get(low)))
-            return entries.get(low).getValue();
-        else
-            return -1;
-
+        return interpolation_search(array, item, (a,b) -> {return differenceOperator(a,b);});
     }
 
+    public static <T extends Comparable<T>> int interpolation_search(ArrayList<T> array, T item, BiFunction<T, T, Integer> minus){
+        return interpolation_search(array, item, minus, Comparator.naturalOrder());
+    }
+
+    public static <T> int interpolation_search( ArrayList<T> array, T item, BiFunction<T, T, Integer> minus, Comparator<T> comparator ){
+        int low = 0;
+        int high = array.size() -1;
+        int mid;
+
+        while ( !Objects.equals(array.get(high), array.get(low))
+                  && comparator.compare(item, array.get(low)) >=0
+                  && comparator.compare(item, array.get(high)) <=0
+        ){
+            mid = low + minus.apply(item, array.get(low)) * (high-low) / minus.apply(array.get(high), array.get(low));
+
+            if (comparator.compare(array.get(mid), item) < 0) {
+                low = mid + 1;
+            }
+            else if (comparator.compare(item, array.get(mid)) < 0){
+                high = mid -1;
+            }
+            else {
+                return mid;
+            }
+        }
+
+        if (Objects.equals(item, array.get(low))) {
+            return low;
+        }
+
+        return -1;
+    }
+
+    public static int differenceOperator(String a, String b){
+        int length = Math.min(a.length(), b.length());
+        String subtractor = a.substring(0,length);
+        String subtractee = b.substring(0,length);
+        return convertWord(subtractor) - convertWord(subtractee);
+    }
 
     public static int convertString(String s) {
         return s.toLowerCase().hashCode() - 96;
     }
 
-    public static double convertWord(String s) {
+    public static int convertWord(String s) {
         int length = s.length();
         double sum = 0;
         for (int i = 0; i < length; i++) {
             int value = convertString(s.substring(i, i + 1));
-            System.out.println(value);
             sum = sum + value * Math.pow(10.0, length - i - 1);
         }
-        return sum;
-    }
-
-    public static Map<String, Integer> letterToNumber(ArrayList<String> testList) {
-        Map<String, Integer> getIndex = new HashMap<String, Integer>();
-        for (int i = 0; i < testList.size(); i++) {
-            getIndex.put(testList.get(i), i);
-        }
-        return getIndex;
+        return (int) sum;
     }
 
     public static void main(String[] args) {
@@ -95,5 +86,4 @@ public class CWK2Q2 {
 
         System.out.println(interpolation_search(testList, "Are"));
     }
-
 }

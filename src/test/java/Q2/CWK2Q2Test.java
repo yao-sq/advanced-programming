@@ -10,21 +10,38 @@ import java.io.FileReader;
 import java.util.*;
 import java.util.regex.Pattern;
 
+import static java.util.Arrays.asList;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CWK2Q2Test {
     @Test
+    public void interpolationSearch_example1(){
+        List<String> words = asList("Hello", "World", "How", "Are", "You");
+        ArrayList<String> array = new ArrayList<>();
+        for (String word: words) {
+            array.add(word);
+        }
+
+        assertThat( CWK2Q2.interpolation_search(array, "Are")).isEqualTo(0);
+        assertThat( CWK2Q2.interpolation_search(array, "Hello")).isEqualTo(1);
+        assertThat( CWK2Q2.interpolation_search(array, "How")).isEqualTo(2);
+        assertThat( CWK2Q2.interpolation_search(array, "World")).isEqualTo(3);
+        assertThat( CWK2Q2.interpolation_search(array, "You")).isEqualTo(4);
+    }
+
+    @Test
     void checkConvertedStringHasRightValue(){
         String s = "Z";
-        int expected = s.toLowerCase().hashCode() -96;
+        int expected = s.toLowerCase().hashCode() - 96;
         int actual = CWK2Q2.convertString(s);
 
-        Assertions.assertThat(actual).isEqualTo(expected);
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test
     void checkInterpolationSearch() throws FileNotFoundException {
-        String item = "\"MARY\"";
+        String item = "MARY";
         String[] words = getStringFromFile();
 
         ArrayList<String> testList = new ArrayList<String>();
@@ -32,22 +49,16 @@ class CWK2Q2Test {
             testList.add(word);
         }
 
-        Map<String, Integer> unsortedIndexOf = CWK2Q2.letterToNumber(testList);
-
-        int actualUnsortedPosition = -1;
-        int actualSortedPosition = CWK2Q2.interpolation_search(testList, item);
-        if (actualSortedPosition != -1){
-            actualUnsortedPosition = unsortedIndexOf.get(item);
-        }
-        Assertions.assertThat(actualUnsortedPosition).isEqualTo(0);
+        //FIXME:
+        assertThat(CWK2Q2.interpolation_search(testList, item)).isEqualTo(0);
     }
 
     @Test
     void checkStringIsReadProperly() throws FileNotFoundException {
         String[] words = getStringFromFile();
 
-        Assertions.assertThat(words[0]).isEqualTo("MARY");
-        Assertions.assertThat(words[1]).isEqualTo("PATRICIA");
+        assertThat(words[0]).isEqualTo("MARY");
+        assertThat(words[1]).isEqualTo("PATRICIA");
     }
 
     public String[] getStringFromFile() throws FileNotFoundException {
