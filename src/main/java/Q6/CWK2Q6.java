@@ -50,21 +50,25 @@ public class CWK2Q6 {
 
 	public static void redactWords(String textFilename, String redactWordsFilename){
 		String fileContent = readFile(textFilename);
-		String redactWords = readFile(redactWordsFilename);
+		String redactEntitiesContent = readFile(redactWordsFilename);
 
-		String[] originalEntities = redactWords.split(",");
-		Arrays.setAll( originalEntities, i -> originalEntities[i].trim());
+		String[] redactEntities = redactEntitiesContent.split(",");
+		Arrays.setAll( redactEntities, i -> redactEntities[i].trim());
+		ArrayList<String> redactWords = new ArrayList<>();
 
-		System.out.println("---------processing words in file----------");
-		ArrayList<String> entities = new ArrayList<>(Arrays.asList(originalEntities));
-		fileContent = replaceWordsInFile(fileContent, entities);
-		System.out.println(fileContent);
+		for (String redactEntity : redactEntities) {
+			for (String redactWord : redactEntity.split(" ")) {
+				redactWords.add(redactWord);
+			}
+		}
 
-		System.out.println("---------processing other proper nouns----------");
+		// Processing redact words recorded in the file
+		fileContent = replaceWordsInFile(fileContent, redactWords);
+
+		// Processing other proper nouns
 		ArrayList<String> otherProperNouns = getOtherProperNouns(fileContent);
 		fileContent = replaceWordsInFile(fileContent, otherProperNouns );
 		System.out.println(fileContent);
-
 	}
 
 
@@ -78,15 +82,13 @@ public class CWK2Q6 {
 			for (String word : words) {
 				if ( sentence.indexOf(word) !=0 ) {
 					if ( Character.isUpperCase(word.charAt(0))) {
-						String processedWord = word.indexOf(",")==-1? word: word.substring(0, word.length()-1);
+						String processedWord = !word.contains(",") ? word: word.substring(0, word.length()-1);
 						properNouns.add(processedWord);
-						System.out.println(processedWord);
 					}
 				}
 			}
-			System.out.println();
 		}
-		return properNouns;
+		return properNouns;  //FIXME: Petersberg
 	}
 
 	public static String replaceWordsInFile(String fileContent, ArrayList<String> entities) {
@@ -132,6 +134,5 @@ public class CWK2Q6 {
 
 		redactWords(inputFile, redactFile);
 	}
-
 
 }
