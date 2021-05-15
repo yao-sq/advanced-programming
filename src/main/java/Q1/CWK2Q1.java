@@ -18,23 +18,29 @@ import java.util.*;
  */
 
 public class CWK2Q1 {
+    private static final List<Integer> gaps = Arrays.asList(1, 3, 7, 15, 31, 63, 127, 255, 511);
+    static {
+        gaps.sort(Comparator.reverseOrder());
+    }
+
     public static void shell_sort(ArrayList<Double> array) {
         int n = array.size();
-        List<Integer> gaps = Arrays.asList(1, 3, 7, 15, 31, 63, 127, 255, 511);
-        gaps.sort(Comparator.reverseOrder());
 
 //        for (int gap = n / 2; gap > 0; gap /= 2) {
         for ( int gap: gaps) {
             for (int i = gap; i < n; i += 1) {
                 double temp = array.get(i);
                 int j;
-                for (j = i; j >= gap && array.get(j - gap) > temp; j -= gap)
+                for (j = i; j >= gap && array.get(j - gap) > temp; j -= gap) {
                     array.set(j, array.get(j - gap));
+                }
                 array.set(j, temp);
             }
-//            System.out.println(array);
+            if ( gap < n) {
+                System.out.println(array);
+            }
         }
-        System.out.print(array);
+//        System.out.print(array);
     }
 
     public static void main(String[] args) {
@@ -53,12 +59,5 @@ public class CWK2Q1 {
         shell_sort(testList);
     }
 
-    public static List<Double> convertArrayIntegerToDouble(List<Integer> integers) {
-        List<Double> doubles = new ArrayList<Double>();
-        for (Integer i: integers) {
-            Double d = new Double(i);
-            doubles.add(d);
-        }
-        return doubles;
-    }
+
 }
