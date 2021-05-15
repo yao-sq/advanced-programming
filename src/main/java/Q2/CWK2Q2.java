@@ -19,7 +19,9 @@ import java.util.function.BiPredicate;
 public class CWK2Q2<T> {
     public static int interpolation_search(ArrayList<String> array, String item) {
         Collections.sort(array);
-        return interpolation_search(array, item, (a,b) -> {return differenceOperator(a,b);});
+        System.out.println("Using interpolation search");
+//        return interpolation_search(array, item, CWK2Q2::characterSumDifference);
+        return interpolation_search(array, item, CWK2Q2::scaledCharDifference);
     }
 
     public static <T extends Comparable<T>> int interpolation_search(ArrayList<T> array, T item, BiFunction<T, T, Integer> minus){
@@ -35,7 +37,8 @@ public class CWK2Q2<T> {
                   && comparator.compare(item, array.get(low)) >=0
                   && comparator.compare(item, array.get(high)) <=0
         ){
-            mid = low + minus.apply(item, array.get(low)) * (high-low) / minus.apply(array.get(high), array.get(low));
+            mid = low + (minus.apply(item, array.get(low))
+                    * ((high-low) / minus.apply(array.get(high), array.get(low))));
 
             if (comparator.compare(array.get(mid), item) < 0) {
                 low = mid + 1;
@@ -55,7 +58,28 @@ public class CWK2Q2<T> {
         return -1;
     }
 
-    public static int differenceOperator(String a, String b){
+
+    public static int scaledCharDifference(String a, String b) {
+        int commonLength = Math.min(a.length(), b.length());
+        for (int i = 0; i<commonLength; i++) {
+            int diff = Character.compare(a.charAt(i), b.charAt(i));
+            if (diff != 0) {
+                return diff * (82595524 - i);
+            }
+        }
+        return Integer.compare(a.length(), b.length());
+    }
+
+
+    public static int characterSumDifference(String a, String b){
+        return characterSum(a) - characterSum(b);
+    }
+    private static int characterSum(String a) {
+        return a.chars().sum();
+    }
+
+
+    public static int commonLengthCharacterSumDifference(String a, String b){
         int length = Math.min(a.length(), b.length());
         String subtractor = a.substring(0,length);
         String subtractee = b.substring(0,length);

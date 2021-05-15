@@ -28,6 +28,23 @@ class CWK2Q2Test {
     }
 
     @Test
+    public void interpolationSearch_example2(){
+        List<String> words = asList("Ma", "Mar", "Mary", "Marianne", "Marianna", "Mariann", "Rosymary");
+        ArrayList<String> array = new ArrayList<>(words);
+
+        assertThat( CWK2Q2.interpolation_search(array, "Ma")).isEqualTo(0);
+        assertThat( CWK2Q2.interpolation_search(array, "Mar")).isEqualTo(1);
+        assertThat( CWK2Q2.interpolation_search(array, "Mariann")).isEqualTo(2);
+        assertThat( CWK2Q2.interpolation_search(array, "Marianna")).isEqualTo(3);
+        assertThat( CWK2Q2.interpolation_search(array, "Marianne")).isEqualTo(4);
+        assertThat( CWK2Q2.interpolation_search(array, "Mary")).isEqualTo(5);
+        assertThat( CWK2Q2.interpolation_search(array, "Rosymary")).isEqualTo(6);
+    }
+
+
+
+
+    @Test
     void checkConvertedLetterHasRightValue(){
         String s = "a";
         int expected = s.toLowerCase().hashCode() - 96;
@@ -47,7 +64,7 @@ class CWK2Q2Test {
         }
 
         //FIXME:
-        assertThat(CWK2Q2.interpolation_search(testList, item)).isEqualTo(0);
+        assertThat(CWK2Q2.interpolation_search(testList, item)).isEqualTo(3362);
     }
 
     @Test
@@ -71,5 +88,10 @@ class CWK2Q2Test {
         Arrays.setAll(words, i -> words[i].substring(1, words[i].length()-1));
 //        Arrays.setAll(words, i -> words[i].replaceFirst("^\"(.*)\"$", "$1"));
         return words;
+    }
+
+    @Test
+    void check(){
+        System.out.println(CWK2Q2.scaledCharDifference("Mar", "Mary"));
     }
 }
