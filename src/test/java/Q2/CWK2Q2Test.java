@@ -18,10 +18,7 @@ class CWK2Q2Test {
     @Test
     public void interpolationSearch_example1(){
         List<String> words = asList("Hello", "World", "How", "Are", "You");
-        ArrayList<String> array = new ArrayList<>();
-        for (String word: words) {
-            array.add(word);
-        }
+        ArrayList<String> array = new ArrayList<>(words);
 
         assertThat( CWK2Q2.interpolation_search(array, "Are")).isEqualTo(0);
         assertThat( CWK2Q2.interpolation_search(array, "Hello")).isEqualTo(1);
@@ -31,8 +28,8 @@ class CWK2Q2Test {
     }
 
     @Test
-    void checkConvertedStringHasRightValue(){
-        String s = "Z";
+    void checkConvertedLetterHasRightValue(){
+        String s = "a";
         int expected = s.toLowerCase().hashCode() - 96;
         int actual = CWK2Q2.convertString(s);
 
@@ -67,6 +64,10 @@ class CWK2Q2Test {
         sc.useDelimiter("\\Z");
         String s = sc.next();
         String[] words = s.split(",");
+
+        System.out.println("Total count is: " + words.length);
+        long uniqueCount = Arrays.stream(words).distinct().count();
+        System.out.println("Unique count is: " + uniqueCount);
         Arrays.setAll(words, i -> words[i].substring(1, words[i].length()-1));
 //        Arrays.setAll(words, i -> words[i].replaceFirst("^\"(.*)\"$", "$1"));
         return words;
