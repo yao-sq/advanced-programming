@@ -5,7 +5,10 @@ import java.io.FileNotFoundException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
+
+import static java.util.Arrays.asList;
 
 /**
  *  @author Anonymous (do not change)
@@ -50,30 +53,42 @@ public class CWK2Q6 {
 
 	public static void redactWords(String textFilename, String redactWordsFilename){
 		String fileContent = readFile(textFilename);
-		String redactEntitiesContent = readFile(redactWordsFilename);
+		String redactNounsContent = readFile(redactWordsFilename);
 
-		String[] redactEntities = redactEntitiesContent.split(",");
-		Arrays.setAll( redactEntities, i -> redactEntities[i].trim());
+		String[] redactNouns = redactNounsContent.split("\\s*,\\s*");
+
+		String redacted = redactNouns(fileContent, asList(redactNouns));
+		System.out.println(redacted);
+	}
+
+	public static String redactNouns(String text, List<String> redactNouns) {
 		ArrayList<String> redactWords = new ArrayList<>();
-
-		for (String redactEntity : redactEntities) {
-			for (String redactWord : redactEntity.split(" ")) {
+		for (String noun : redactNouns) {
+			for (String redactWord : noun.split(" ")) {
 				redactWords.add(redactWord);
 			}
 		}
+		String redacted = redactWords(text, redactWords);
 
-		// Processing redact words recorded in the file
-		fileContent = replaceWordsInFile(fileContent, redactWords);
 
 		// Processing other proper nouns
-		ArrayList<String> otherProperNouns = getOtherProperNouns(fileContent);
-		fileContent = replaceWordsInFile(fileContent, otherProperNouns );
-		System.out.println(fileContent);
+		redacted = redactOtherNouns(redacted);
+
+		return redacted;
 	}
 
+	public static String redactWords(String text, List<String> redactWords) {
+		// Processing redact words recorded in the file
+		return replaceWordsInFile(text, redactWords);
+	}
 
-	public static ArrayList<String> getOtherProperNouns(String fileContent) {
-		ArrayList<String> properNouns = new ArrayList<>();
+	public static String redactOtherNouns(String text) {
+		List<String> otherProperNouns = getOtherProperNouns(text);
+		return replaceWordsInFile(text, otherProperNouns);
+	}
+
+	public static List<String> getOtherProperNouns(String fileContent) {
+		List<String> properNouns = new ArrayList<>();
 
 		// Break file into sentences.
 		String[] sentences = fileContent.split("\\. ");
@@ -91,7 +106,7 @@ public class CWK2Q6 {
 		return properNouns;  //FIXME: Petersberg
 	}
 
-	public static String replaceWordsInFile(String fileContent, ArrayList<String> entities) {
+	public static String replaceWordsInFile(String fileContent, List<String> entities) {
 		for (String entity : entities) {
 			int entityLength = entity.length();
 			if (fileContent.contains(entity)) {

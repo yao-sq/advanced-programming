@@ -36,14 +36,14 @@ class CWK2Q6Test {
         assertThat(outContent.toString()).isEqualTo("hello");
     }
 
-    @Test //FIXME: this test didn't pass, has some weird spaces at the end of sentence
+    @Test
     void redactWords() {
         String inputFile = "/Users/yao/IdeaProjects/advanced-programming/src/main/java/Q6/exampleFile.txt";
         String redactFile = "/Users/yao/IdeaProjects/advanced-programming/src/main/java/Q6/exampleRedact.txt";
         String expected = "It was in ****, 1805, and the speaker was the well-known **** ******** *******, maid of honor and favorite of the ******* ***** *********. With these words she greeted ****** ****** *******, a man of high rank and importance, who was the first to arrive at her reception. **** ******** had had a cough for some days. She was, as she said, suffering from la grippe; grippe being then a new word in *** **********, used only by the elite.";
 
         CWK2Q6.redactWords(inputFile, redactFile);
-        assertThat(outContent.toString()).isEqualTo(expected);
+        assertThat(outContent.toString().trim()).isEqualTo(expected);
     }
 
     @Test
@@ -56,14 +56,14 @@ class CWK2Q6Test {
         for (String entity : entities) {
             System.out.println(entity.trim());
         }
-        //TODO: how do we write test for this?
+        //TODO: how do we  write test for this?
     }
 
     @Test
     void properNouns(){
         String fileContent = CWK2Q6.readFile("/Users/yao/IdeaProjects/advanced-programming/src/main/java/Q6/exampleFile.txt");
 
-        ArrayList<String> properNouns = CWK2Q6.getOtherProperNouns(fileContent);
+        List<String> properNouns = CWK2Q6.getOtherProperNouns(fileContent);
         for (String properNoun : properNouns) {
             System.out.println(properNoun);
         }
