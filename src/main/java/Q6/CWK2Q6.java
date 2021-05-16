@@ -53,37 +53,26 @@ public class CWK2Q6 {
     public static void redactWords(String textFilename, String redactWordsFilename) {
         String fileContent = readFile(textFilename);
 
+
         String redactContent = readFile(redactWordsFilename);
-
         // Process redact content into a list of words
-        List<String> wordsToRedactFromFile = processContentToListOfWords(redactContent);
+        Set<String> wordsToRedactFromFile = new HashSet<>(processContentToListOfWords(redactContent));
 
-        List<String> wordsInText = processContentToListOfWords(fileContent);
-        // Traverse the big block of text, word by word, and check if the word is in the words to redact?
-        for (String wordInText : wordsInText) {
-//            System.out.println(wordInText);
-            if (wordsToRedactFromFile.contains(wordInText)) {
-                fileContent = fileContent.replace( wordInText, toStars(wordInText));
-            }
+        String result = redactNouns(redact(fileContent, wordsToRedactFromFile));
 
-
-            //FIXME:  cases not working:  1. start of sentences; 2. St.
-            if ( !wordInText.isEmpty() && Character.isUpperCase(wordInText.charAt(0))) {
-                fileContent = fileContent.replace( wordInText, toStars(wordInText));
-            }
-        }
-        System.out.println(fileContent);
+        System.out.println(result);
     }
 
     public static String redact(String text, Set<String> explicitlyRedacted) {
-        //method
         String redacted = text;
         for (String s : explicitlyRedacted) {
             redacted = redacted.replace(s, repeat("*", s.length()));
         }
+        return redacted;
+    }
 
-        //another method
-        String[] tokens = Pattern.compile("\\b").split(redacted);
+    public static String redactNouns(String text) {
+        String[] tokens = Pattern.compile("\\b").split(text);
 
         for (int i = 0; i < tokens.length; i++) {
             String token = tokens[i];
@@ -106,15 +95,6 @@ public class CWK2Q6 {
         return result.toString();
     }
 
-    public static String toStars(String wordFrom) {
-        String wordTo = "";
-        int wordLength = wordFrom.length();
-        for (int i = 0; i < wordLength; i++) {
-                wordTo = wordTo.concat("*");
-        }
-        return wordTo;
-    }
-
     public static List<String> processContentToListOfWords(String redactContent) {
         List<String> wordsToRedact = new ArrayList<>();
         String[] phrases = redactContent.split("\\s*,\\s*");
@@ -128,6 +108,19 @@ public class CWK2Q6 {
             }
         }
         return wordsToRedact;
+    }
+
+
+
+    // ... old ... //
+
+    public static String toStars(String wordFrom) {
+        String wordTo = "";
+        int wordLength = wordFrom.length();
+        for (int i = 0; i < wordLength; i++) {
+                wordTo = wordTo.concat("*");
+        }
+        return wordTo;
     }
 
 
