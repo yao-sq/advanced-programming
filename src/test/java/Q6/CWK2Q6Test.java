@@ -59,7 +59,6 @@ class CWK2Q6Test {
         System.out.println(result);
 
         //TODO: BOOK NINE is BOOK **** -- ok?
-        //FIXME: paragraph start is not considered start of sentence
     }
 
 

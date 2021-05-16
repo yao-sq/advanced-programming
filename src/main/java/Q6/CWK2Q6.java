@@ -76,20 +76,22 @@ public class CWK2Q6 {
     }
 
     public static String redact(String text, Set<String> explicitlyRedacted) {
+        //method
         String redacted = text;
         for (String s : explicitlyRedacted) {
             redacted = redacted.replace(s, repeat("*", s.length()));
         }
 
+        //another method
         String[] tokens = Pattern.compile("\\b").split(redacted);
-//        String[] tokens = Pattern.compile("(?<=\\s)(?=\\S)").split(text);
 
         for (int i = 0; i < tokens.length; i++) {
             String token = tokens[i];
-            // is explicitely redacted OR (capitalized && not start of a sentence)
-            if (//explicitlyRedacted.contains(token) ||
-                    (!token.isEmpty() && Character.isUpperCase(token.charAt(0))
-                    && !(i == 0 || tokens[i - 1].trim().endsWith(".")))) {
+            // capitalized && not (start of a sentence)
+            if (!token.isEmpty() && Character.isUpperCase(token.charAt(0)) && !
+//                    (i == 0 || tokens[i - 1].endsWith("\r\n\r\n") || tokens[i - 1].trim().endsWith("."))) {
+//                    (i == 0 || tokens[i - 1].matches("\\R\\R$") || tokens[i - 1].trim().endsWith("."))) {
+                    (i == 0 || tokens[i - 1].matches("(\\R\\R|\\.\\s*)$"))) {
                 tokens[i] = repeat("*", token.length());
             }
         }
