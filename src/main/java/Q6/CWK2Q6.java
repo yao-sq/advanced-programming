@@ -1,10 +1,11 @@
 package Q6;
 
+import javax.xml.stream.events.Characters;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 
@@ -50,6 +51,85 @@ import static java.util.Arrays.asList;
 public class CWK2Q6 {
 
     public static void redactWords(String textFilename, String redactWordsFilename) {
+        String fileContent = readFile(textFilename);
+
+        String redactContent = readFile(redactWordsFilename);
+
+        // Process redact content into a list of words
+        List<String> wordsToRedactFromFile = processContentToListOfWords(redactContent);
+
+        List<String> wordsInText = processContentToListOfWords(fileContent);
+        // Traverse the big block of text, word by word, and check if the word is in the words to redact?
+        for (String wordInText : wordsInText) {
+//            System.out.println(wordInText);
+            if (wordsToRedactFromFile.contains(wordInText)) {
+                fileContent = fileContent.replace( wordInText, toStars(wordInText));
+            }
+
+
+            //FIXME:  cases not working:  1. start of sentences; 2. St.
+            if ( !wordInText.isEmpty() && Character.isUpperCase(wordInText.charAt(0))) {
+                fileContent = fileContent.replace( wordInText, toStars(wordInText));
+            }
+        }
+        System.out.println(fileContent);
+    }
+
+    public static String redact(String text, Set<String> explicitlyRedacted) {
+        String redacted = text;
+        for (String s : explicitlyRedacted) {
+            redacted = redacted.replace(s, repeat("*", s.length()));
+        }
+
+        String[] tokens = Pattern.compile("\\b").split(redacted);
+//        String[] tokens = Pattern.compile("(?<=\\s)(?=\\S)").split(text);
+
+        for (int i = 0; i < tokens.length; i++) {
+            String token = tokens[i];
+            // is explicitely redacted OR (capitalized && not start of a sentence)
+            if (//explicitlyRedacted.contains(token) ||
+                    (!token.isEmpty() && Character.isUpperCase(token.charAt(0))
+                    && !(i == 0 || tokens[i - 1].trim().endsWith(".")))) {
+                tokens[i] = repeat("*", token.length());
+            }
+        }
+        return String.join("", tokens);
+    }
+
+    private static String repeat(String text, int n) {
+        StringBuilder result = new StringBuilder(text.length() * n);
+        for (int i = 0; i < n; i++) {
+            result.append(text);
+        }
+        return result.toString();
+    }
+
+    public static String toStars(String wordFrom) {
+        String wordTo = "";
+        int wordLength = wordFrom.length();
+        for (int i = 0; i < wordLength; i++) {
+                wordTo = wordTo.concat("*");
+        }
+        return wordTo;
+    }
+
+    public static List<String> processContentToListOfWords(String redactContent) {
+        List<String> wordsToRedact = new ArrayList<>();
+        String[] phrases = redactContent.split("\\s*,\\s*");
+        for (String phrase : phrases) {
+            String[] words = phrase.split(" ");
+            for (String word : words) {
+                if (word.contains(".")){
+                    word = word.substring(0, word.length()-1);
+                }
+                wordsToRedact.add(word);
+            }
+        }
+        return wordsToRedact;
+    }
+
+
+    public static void redactWords_backup(String textFilename, String redactWordsFilename) {
         String fileContent = readFile(textFilename);
         String redactContent = readFile(redactWordsFilename);
 
@@ -138,11 +218,11 @@ public class CWK2Q6 {
 //		String redactFile = "./redact.txt";
 //		redactWords(inputFile, redactFile);
 
-        String inputFile = "/Users/yao/IdeaProjects/advanced-programming/src/main/java/Q6/exampleFile.txt";
-        String redactFile = "/Users/yao/IdeaProjects/advanced-programming/src/main/java/Q6/exampleRedact.txt";
+//        String inputFile = "/Users/yao/IdeaProjects/advanced-programming/src/main/java/Q6/exampleFile.txt";
+//        String redactFile = "/Users/yao/IdeaProjects/advanced-programming/src/main/java/Q6/exampleRedact.txt";
 
-//		String inputFile = "/Users/yao/IdeaProjects/advanced-programming/src/main/java/Q6/warandpeace.txt";
-//		String redactFile = "/Users/yao/IdeaProjects/advanced-programming/src/main/java/Q6/redact.txt";
+		String inputFile = "/Users/yao/IdeaProjects/advanced-programming/src/main/java/Q6/warandpeace.txt";
+		String redactFile = "/Users/yao/IdeaProjects/advanced-programming/src/main/java/Q6/redact.txt";
 
         redactWords(inputFile, redactFile);
     }
