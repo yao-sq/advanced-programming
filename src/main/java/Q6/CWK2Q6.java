@@ -1,13 +1,9 @@
 package Q6;
 
-import javax.xml.stream.events.Characters;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
-import static java.util.Arrays.asList;
 
 /**
  * @author Anonymous (do not change)
@@ -52,8 +48,6 @@ public class CWK2Q6 {
 
     public static void redactWords(String textFilename, String redactWordsFilename) {
         String fileContent = readFile(textFilename);
-
-
         String redactContent = readFile(redactWordsFilename);
         // Process redact content into a list of words
         Set<String> wordsToRedactFromFile = new HashSet<>(processContentToListOfWords(redactContent));
@@ -87,10 +81,10 @@ public class CWK2Q6 {
         return String.join("", tokens);
     }
 
-    private static String repeat(String text, int n) {
-        StringBuilder result = new StringBuilder(text.length() * n);
+    private static String repeat(String symbol, int n) {
+        StringBuilder result = new StringBuilder(symbol.length() * n);
         for (int i = 0; i < n; i++) {
-            result.append(text);
+            result.append(symbol);
         }
         return result.toString();
     }
@@ -101,98 +95,13 @@ public class CWK2Q6 {
         for (String phrase : phrases) {
             String[] words = phrase.split(" ");
             for (String word : words) {
-                if (word.contains(".")){
-                    word = word.substring(0, word.length()-1);
+                if (word.contains(".")) {
+                    word = word.substring(0, word.length() - 1);
                 }
                 wordsToRedact.add(word);
             }
         }
         return wordsToRedact;
-    }
-
-
-
-    // ... old ... //
-
-    public static String toStars(String wordFrom) {
-        String wordTo = "";
-        int wordLength = wordFrom.length();
-        for (int i = 0; i < wordLength; i++) {
-                wordTo = wordTo.concat("*");
-        }
-        return wordTo;
-    }
-
-
-    public static void redactWords_backup(String textFilename, String redactWordsFilename) {
-        String fileContent = readFile(textFilename);
-        String redactContent = readFile(redactWordsFilename);
-
-        String[] phrases = redactContent.split("\\s*,\\s*");
-
-        String redacted = redactNouns(fileContent, asList(phrases));
-        System.out.println(redacted);
-    }
-
-    public static String redactNouns(String text, List<String> phrases) {
-        ArrayList<String> words = new ArrayList<>();
-        for (String phrase : phrases) {
-            for (String word : phrase.split(" ")) {
-                words.add(word);
-            }
-        }
-        String redacted = redactWords(text, words);
-        // Processing other proper nouns
-        redacted = redactOtherNouns(redacted);
-
-        return redacted;
-    }
-
-    public static String redactWords(String text, List<String> words) {
-        // Processing redact words recorded in the file
-        return replaceWordsInFile(text, words);
-    }
-
-    public static String redactOtherNouns(String text) {
-        List<String> otherProperNouns = getOtherProperNouns(text);
-        return replaceWordsInFile(text, otherProperNouns);
-    }
-
-    public static List<String> getOtherProperNouns(String fileContent) {
-        List<String> properNouns = new ArrayList<>();
-
-        // Break file into sentences.
-        String[] sentences = fileContent.split("\\. ");
-        for (String sentence : sentences) {
-            String[] words = sentence.split(" ");
-            for (String word : words) {
-                if (sentence.indexOf(word) != 0) {
-                    if (Character.isUpperCase(word.charAt(0))) {
-                        String processedWord = !word.contains(",") ? word : word.substring(0, word.length() - 1);
-                        properNouns.add(processedWord);
-                    }
-                }
-            }
-        }
-        return properNouns;
-    }
-
-    public static String replaceWordsInFile(String fileContent, List<String> phrases) {
-        for (String phrase : phrases) {
-            int phraseLength = phrase.length();
-            if (fileContent.contains(phrase)) {
-                String replacement = "";
-                for (int i = 0; i < phraseLength; i++) {
-                    if (phrase.charAt(i) == ' ') {
-                        replacement = replacement.concat(" ");
-                    } else {
-                        replacement = replacement.concat("*");
-                    }
-                }
-                fileContent = fileContent.replace(phrase, replacement);
-            }
-        }
-        return fileContent;
     }
 
     public static String readFile(String pathName) {
@@ -208,7 +117,7 @@ public class CWK2Q6 {
     }
 
     public static void main(String[] args) {
-        // keep this here as it was from the original download
+        // Keep this here as it was from the original download
 //		String inputFile = "./debate.txt";
 //		String redactFile = "./redact.txt";
 //		redactWords(inputFile, redactFile);
@@ -216,8 +125,8 @@ public class CWK2Q6 {
 //        String inputFile = "/Users/yao/IdeaProjects/advanced-programming/src/main/java/Q6/exampleFile.txt";
 //        String redactFile = "/Users/yao/IdeaProjects/advanced-programming/src/main/java/Q6/exampleRedact.txt";
 
-		String inputFile = "/Users/yao/IdeaProjects/advanced-programming/src/main/java/Q6/warandpeace.txt";
-		String redactFile = "/Users/yao/IdeaProjects/advanced-programming/src/main/java/Q6/redact.txt";
+        String inputFile = "/Users/yao/IdeaProjects/advanced-programming/src/main/java/Q6/warandpeace.txt";
+        String redactFile = "/Users/yao/IdeaProjects/advanced-programming/src/main/java/Q6/redact.txt";
 
         redactWords(inputFile, redactFile);
     }

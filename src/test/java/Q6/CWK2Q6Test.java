@@ -51,7 +51,6 @@ class CWK2Q6Test {
     void redactWords_forLongExample() {
         String inputFile = "/Users/yao/IdeaProjects/advanced-programming/src/main/java/Q6/warandpeace.txt";
         String redactFile = "/Users/yao/IdeaProjects/advanced-programming/src/main/java/Q6/redact.txt";
-//        String expected = "It was in ****, 1805, and the speaker was the well-known **** ******** *******, maid of honor and favorite of the ******* ***** *********. With these words she greeted ****** ****** *******, a man of high rank and importance, who was the first to arrive at her reception. **** ******** had had a cough for some days. She was, as she said, suffering from la grippe; grippe being then a new word in *** **********, used only by the elite.";
 
         Set<String> explicitlyRedacted = new HashSet<>(asList("Ilya", "Rostov", "St.", "Petersburg", "Marya", "Fedorovna", "Moscow", "Anna", "Pavlovna", "Scherer", "Countess", "Bezukhova", "Andrew", "Bolkonski", "Boris", "Drubetskoy", "Vasili", "Kuragin", "Nicholas", "Rostov"));
 
@@ -59,6 +58,10 @@ class CWK2Q6Test {
         System.out.println(result);
 
         //TODO: BOOK NINE is BOOK **** -- ok?
+        //TODO: "But every time ...
+        //TODO: I
+        //TODO: sometimes CHAPTER is marked, sometimes it's not
+        //TODO: new line after previous line stops with ."
     }
 
 
@@ -89,11 +92,9 @@ class CWK2Q6Test {
 //        for (String phrase : phrases) {
 //            System.out.println(phrase);
 //        }
-//        //TODO: how do we write test for this?
 //    }
 //
 //    @Test
-//        //FIXME: Petersberg
 //    void properNouns() {
 //        String fileContent = CWK2Q6.readFile("/Users/yao/IdeaProjects/advanced-programming/src/main/java/Q6/exampleFile.txt");
 //        List<String> expected = asList("Anna", "July", "Pavlovna", "Scherer", "Empress", "Marya", "Fedorovna", "Prince", "Vasili", "Kuragin", "Pavlovna", "St", "Petersberg");
