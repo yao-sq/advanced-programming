@@ -1,6 +1,7 @@
 package Q1;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Anonymous (do not change)
@@ -19,6 +20,7 @@ import java.util.*;
 
 public class CWK2Q1 {
     private static final List<Integer> gaps = Arrays.asList(1, 3, 7, 15, 31, 63, 127, 255, 511);
+
     static {
         gaps.sort(Comparator.reverseOrder());
     }
@@ -27,7 +29,7 @@ public class CWK2Q1 {
         int n = array.size();
 
 //        for (int gap = n / 2; gap > 0; gap /= 2) {
-        for ( int gap: gaps) {
+        for (int gap : gaps) {
             for (int i = gap; i < n; i += 1) {
                 double temp = array.get(i);
                 int j;
@@ -36,11 +38,18 @@ public class CWK2Q1 {
                 }
                 array.set(j, temp);
             }
-            if ( gap < n) {
-                System.out.println(array);
+            if (gap < n) {
+//                System.out.println(array);
+                printArrayWithFormat(array);
             }
         }
 //        System.out.print(array);
+    }
+
+    public static void printArrayWithFormat(Collection<Double> array) {
+        System.out.printf("[%s]%n",
+                array.stream().map(n -> String.format("%.2f", n)).collect(Collectors.joining(", "))
+        );
     }
 
     public static void main(String[] args) {
@@ -58,6 +67,4 @@ public class CWK2Q1 {
 
         shell_sort(testList);
     }
-
-
 }

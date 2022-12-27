@@ -50,10 +50,5 @@ public class CWK2Q8 {
     public static void main(String[] args) {
         int result = CWK2Q8.howManyTuesdays();
         System.out.println("Number of Tuesdays = " + result);
-
-//		DateTimeFormatter weekDayNumFormatter = DateTimeFormatter.ofPattern("E");
-//			String formatted = weekDayNumFormatter.format(t);
-//			System.out.println("Formatted: " + formatted);
-//			if ("Tue".equals(formatted)) {
     }
 }

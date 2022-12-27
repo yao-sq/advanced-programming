@@ -1,10 +1,9 @@
 package Q2;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.BiFunction;
+
+import static java.util.Arrays.asList;
 
 /**
  * @author Anonymous (do not change)
@@ -20,7 +19,6 @@ import java.util.function.BiFunction;
 public class CWK2Q2<T> {
     public static int interpolation_search(ArrayList<String> array, String item) {
         Collections.sort(array);
-        System.out.println("Using interpolation search");
         return interpolation_search(array, item, CWK2Q2::scaledCharDifference);
     }
 
@@ -74,7 +72,13 @@ public class CWK2Q2<T> {
         testList.add("How");
         testList.add("Are");
         testList.add("You");
+        int result = interpolation_search(testList, "How");
+        System.out.println("Result = " + result);
 
-        System.out.println(interpolation_search(testList, "Are"));
+
+        List<String> words = asList("Ma", "Mar", "Mary", "Marianne", "Marianna", "Mariann", "Rosymary");
+        ArrayList<String> array = new ArrayList<>(words);
+        System.out.println("Result for items have common part = " + interpolation_search(array, "Mary"));
+
     }
 }

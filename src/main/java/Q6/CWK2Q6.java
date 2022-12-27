@@ -1,9 +1,10 @@
 package Q6;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * @author Anonymous (do not change)
@@ -54,6 +55,7 @@ public class CWK2Q6 {
 
         String result = redactNouns(redact(fileContent, wordsToRedactFromFile));
 
+        writeFile("./result.txt", result);
         System.out.println(result);
     }
 
@@ -65,6 +67,7 @@ public class CWK2Q6 {
         return redacted;
     }
 
+    private static final Pattern PATTERN_SENTENCE_END = Pattern.compile("(\\R\\R|\\.\\s*)['\"“”‘’„]?$");
     public static String redactNouns(String text) {
         String[] tokens = Pattern.compile("\\b").split(text);
 
@@ -74,7 +77,9 @@ public class CWK2Q6 {
             if (!token.isEmpty() && Character.isUpperCase(token.charAt(0)) && !
 //                    (i == 0 || tokens[i - 1].endsWith("\r\n\r\n") || tokens[i - 1].trim().endsWith("."))) {
 //                    (i == 0 || tokens[i - 1].matches("\\R\\R$") || tokens[i - 1].trim().endsWith("."))) {
-                    (i == 0 || tokens[i - 1].matches("(\\R\\R|\\.\\s*)$"))) {
+//                    (i == 0 || tokens[i - 1].matches("(\\R\\R|\\.\\s*)$"))) {
+                    (i == 0 || PATTERN_SENTENCE_END.matcher(tokens[i - 1]).find())) {
+                if (token.chars().allMatch(Character::isUpperCase)) continue;
                 tokens[i] = repeat("*", token.length());
             }
         }
@@ -90,43 +95,40 @@ public class CWK2Q6 {
     }
 
     public static List<String> processContentToListOfWords(String redactContent) {
-        List<String> wordsToRedact = new ArrayList<>();
-        String[] phrases = redactContent.split("\\s*,\\s*");
-        for (String phrase : phrases) {
-            String[] words = phrase.split(" ");
-            for (String word : words) {
-                if (word.contains(".")) {
-                    word = word.substring(0, word.length() - 1);
-                }
-                wordsToRedact.add(word);
-            }
-        }
-        return wordsToRedact;
+        return Arrays.stream(redactContent.split("\\s*[,\n]\\s*"))
+                .flatMap(phrase -> Arrays.stream(phrase.split(" ")))
+                .collect(toList());
     }
 
     public static String readFile(String pathName) {
-        File file = new File(pathName);
-        Scanner scanner = null;
-        try {
-            scanner = new Scanner(file);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+        try (Scanner scanner = new Scanner(new File(pathName))) {
+            return scanner.useDelimiter("\\Z").next();
         }
-        scanner.useDelimiter("\\Z");
-        return scanner.next();
+        catch (FileNotFoundException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
+    public static void writeFile(String pathName, String contentToWrite)  {
+        try (FileWriter writer = new FileWriter(pathName)) {
+            writer.write(contentToWrite);
+        }
+        catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+
     public static void main(String[] args) {
-        // Keep this here as it was from the original download
 //		String inputFile = "./debate.txt";
 //		String redactFile = "./redact.txt";
 //		redactWords(inputFile, redactFile);
 
-//        String inputFile = "/Users/yao/IdeaProjects/advanced-programming/src/main/java/Q6/exampleFile.txt";
-//        String redactFile = "/Users/yao/IdeaProjects/advanced-programming/src/main/java/Q6/exampleRedact.txt";
+//        String inputFile = "./exampleFile.txt";
+//        String redactFile = "./exampleRedact.txt";
 
-        String inputFile = "/Users/yao/IdeaProjects/advanced-programming/src/main/java/Q6/warandpeace.txt";
-        String redactFile = "/Users/yao/IdeaProjects/advanced-programming/src/main/java/Q6/redact.txt";
+        String inputFile = "./warandpeace.txt";
+        String redactFile = "./redact.txt";
 
         redactWords(inputFile, redactFile);
     }

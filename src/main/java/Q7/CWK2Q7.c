@@ -43,16 +43,107 @@
 #include <stdlib.h>
 #include <string.h>
 
-void encrypt_columnar(const char *message_filename, const char *key, char **result){
 
+char* readfile(const char *filename) {
+    FILE *fp = fopen(filename, "r");
+    fseek(fp, 0L, SEEK_END);
+    long size = ftell(fp) + 1;
+    rewind(fp);
+    char *text = malloc(size * sizeof(char));
+    fread(text, size, 1, fp);
+    fclose(fp);
+    return text;
+}
+
+char* clean_message(const char *input, const char *key) {
+    char* message_buffer = malloc(strlen(input) + 1);
+    char* input_copy = strdup(input);
+    char* token;
+    while ((token = strsep(&input_copy, " \t\n")) != NULL) {
+        strcat(message_buffer, token);
+    }
+    free(input_copy);
+
+    unsigned long ms = strlen(message_buffer);
+    unsigned long ks = strlen(key);
+    unsigned long pad = (ks - (ms % ks)) % ks;
+    unsigned long gs = ms + pad;
+
+    char *message = malloc(gs + 1);
+    strcpy(message, message_buffer);
+    free(message_buffer);
+
+    for (int i = 0; i < pad; ++i) {
+        strcat(message, "X");
+    }
+
+    return message;
+}
+
+struct CharAndIndex {
+    char c;
+    int index;
+};
+int compare_by_char(struct CharAndIndex *a, struct CharAndIndex *b) {
+    return strncmp(&a->c, &b->c, 1);
+}
+
+void copy_column(char* dest, char* src, int dest_col, int src_col, int w, int len) {
+    int h = len / w;
+    for (int r = 0; r < h; ++r) {
+        int ind_src = src_col + (w * r);
+        int ind_dest = dest_col + (w * r);
+        dest[ind_dest] = src[ind_src];
+    }
+}
+
+void encrypt_columnar_message(const char *input, const char *key, char **result) {
+    //clean the string
+    char *message = clean_message(input, key);
+
+    int ks = strlen(key);
+
+    //tuplelize key
+    struct CharAndIndex indexed[ks];
+    for (int i = 0; i < ks; ++i) {
+        indexed[i] = (struct CharAndIndex){.c=key[i], .index=i};
+    }
+
+    //sort key
+    qsort(indexed, ks, sizeof(struct CharAndIndex), compare_by_char);
+
+    //read off columns, writing to result
+    int ms = strlen(message);
+    char *encrypted = malloc(ms + 1);
+    for (int i = 0; i < ks; ++i) {
+        copy_column(encrypted, message, i, indexed[i].index, ks, ms);
+    }
+    encrypted[ms] = '\0';
+
+    free(message);
+    
+    *result = encrypted;
+}
+
+void encrypt_columnar(const char *message_filename, const char *key, char **result) {
+    encrypt_columnar_message(readfile(message_filename), key, result);
 }
 
 int main(int argc, char *argv[]) {
-	const char *example_message = "./text.txt";
-	const char *example_key = "LOVELACE";
 	char *encrypted_message = NULL;
-	encrypt_columnar(example_message, example_key, &encrypted_message);
-	printf("Encrypted message = %s\n", encrypted_message);
-	// insert more code here :-)
+
+//	const char *message = "ATTACK AT DAWN";
+//	const char *key = "KEYS";
+//    encrypt_columnar_message(message, key, &encrypted_message);     // TAATKCTAADNW
+
+//    const char *message = "ATTACK NOW";
+//    const char *key = "KEYS";
+//    encrypt_columnar_message(message, key, &encrypted_message);     // TAATKCONXWXX
+
+	const char *message_filename = "./Q7/text.txt";
+	const char *key = "LOVELACE";
+	encrypt_columnar(message_filename, key, &encrypted_message);
+
+	printf("Encrypted message:\n%s\n", encrypted_message);
 	return EXIT_SUCCESS;
 }
